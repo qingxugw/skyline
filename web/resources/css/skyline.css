@@ -1,0 +1,165 @@
+.add {
+    background-image:url(../../resources/images/create.gif) !important;
+}
+.delete {
+    background-image:url(../../resources/images/delete.gif) !important;
+}
+.update {
+    background-image:url(../../resources/images/update.gif) !important;
+}
+.chart {
+    background-image:url(../../resources/images/chart.gif) !important;
+}
+.grid {
+    background-image:url(../../resources/images/grid.png) !important;
+}
+.refresh {
+    background-image:url(../../resources/images/refresh.png) !important;
+}
+.edit {
+    background-image:url(../../resources/images/edit.png) !important;
+}
+.find{
+	background-image:url(../../resources/images/find.png) !important;
+}
+.search{
+	background-image:url(../../resources/images/search.gif) !important;
+}
+.accept{
+	background-image:url(../../resources/images/accept.png) !important;
+}
+.saved{
+	background-image:url(../../resources/images/saved.png) !important;
+}
+.savebutton{
+    background-image:url(../../resources/images/save.png) !important;
+}
+.cancelbutton{
+    background-image:url(../../resources/images/canceled.png) !important;
+}
+.saving{
+	background-image:url(../../resources/images/saving.gif) !important;
+}
+.password{
+	background-image:url(../../resources/images/password.gif) !important;
+}
+.logout{
+	background-image:url(../../resources/images/logout.gif) !important;
+}
+.menumanage{
+    background-image:url(../../resources/images/application_view_list.png) !important;
+}
+.systemmenu{
+    background-image:url(../../resources/images/systemmenu.png) !important;
+}
+.systemlog{
+    background-image:url(../../resources/images/systemlog.png) !important;
+}
+.collapse{
+    background-image:url(../../resources/images/collapse.png) !important;
+}
+.expand{
+    background-image:url(../../resources/images/expand.png) !important;
+}
+.usermanage{
+    background-image:url(../../resources/images/user.png) !important;
+}
+.rolemanage{
+    background-image:url(../../resources/images/tux.png) !important;
+}
+.roleoperation{
+    background-image:url(../../resources/images/shield_go.png) !important;
+}
+.roleuser{
+    background-image:url(../../resources/images/group_go.png) !important;
+}
+.upload{
+    background-image:url(../../resources/images/image_add.png) !important;
+}
+.piechart{
+    background-image:url(../../resources/images/chart.png) !important;
+}
+.product{
+    background-image:url(../../resources/images/product.png) !important;
+}
+
+
+body {
+    padding:20px;
+    padding-top:32px;
+}
+.x-body {
+    font-family:helvetica,tahoma,verdana,sans-serif;
+    font-size:13px;
+}
+p {
+    margin-bottom:15px;
+}
+h1 {
+    font-size:18px;
+    margin-bottom:20px;
+}
+h2 {
+    font-size:14px;
+    color:#333;
+    font-weight:bold;
+    margin:10px 0;
+}
+.example-info{
+    width:150px;
+    border:1px solid #c3daf9;
+    border-top:1px solid #DCEAFB;
+    border-left:1px solid #DCEAFB;
+    background:#ecf5fe url( info-bg.gif ) repeat-x;
+    font-size:10px;
+    padding:8px;
+}
+pre.code{
+    background: #F8F8F8;
+    border: 1px solid #e8e8e8;
+    padding:10px;
+    margin:10px;
+    margin-left:0px;
+    border-left:5px solid #e8e8e8;
+    font-size: 12px !important;
+    line-height:14px !important;
+}
+.msg .x-box-mc {
+    font-size:14px;
+}
+#msg-div {
+    position:absolute;
+    left:35%;
+    top:10px;
+    width:300px;
+    z-index:20000;
+}
+#msg-div .msg {
+    border-radius: 8px;
+    -moz-border-radius: 8px;
+    background: #F6F6F6;
+    border: 2px solid #ccc;
+    margin-top: 2px;
+    padding: 10px 15px;
+    color: #555;
+}
+#msg-div .msg h3 {
+    margin: 0 0 8px;
+    font-weight: bold;
+    font-size: 15px;
+}
+#msg-div .msg p {
+    margin: 0;
+}
+.x-grid3-row-body p {
+    margin:5px 5px 10px 5px !important;
+}
+
+.feature-list {
+    margin-bottom: 15px;
+}
+.feature-list li {
+    list-style: disc;
+    margin-left: 17px;
+    margin-bottom: 4px;
+}

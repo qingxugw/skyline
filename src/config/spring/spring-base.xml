@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop" xmlns:jee="http://www.springframework.org/schema/jee"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd"
+       default-lazy-init="false">
+    <aop:aspectj-autoproxy/>
+    <bean id="pointCutsDefinition" class="com.skyline.pub.aspectj.pointcut.PointCutsDefinition"/>
+    <bean id="logAdvice" class="com.skyline.pub.aspectj.advice.LogAdvice">
+        <property name="logService" ref="logService"/>
+    </bean>
+
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath*:/config/*.properties</value>
+			</list>
+		</property>
+	</bean>
+
+    <!-- 处理大对象的 -->
+	<bean id="nativeJdbcExtractor" class="org.springframework.jdbc.support.nativejdbc.CommonsDbcpNativeJdbcExtractor" lazy-init="true"/>
+
+     <!-- spring 的操作句柄 -->
+	<bean id="lobHandler" class="org.springframework.jdbc.support.lob.OracleLobHandler" lazy-init="true">
+        <property name="nativeJdbcExtractor">
+            <ref local="nativeJdbcExtractor"/>
+        </property>
+	</bean>
+
+    <!--<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">-->
+         <!--<property name="driverClass"><value>${jdbc.driverClassName}</value></property>-->
+         <!--<property name="jdbcUrl"><value>${jdbc.url}</value></property>-->
+         <!--<property name="user"><value>${jdbc.username}</value></property>-->
+         <!--<property name="password"><value>${jdbc.password}</value></property>-->
+        <!--&lt;!&ndash;连接池中保留的最小连接数。默认值: 3 &ndash;&gt;-->
+         <!--<property name="minPoolSize"><value>6</value></property>-->
+        <!--&lt;!&ndash;连接池中保留的最大连接数。默认值: 15 &ndash;&gt;-->
+         <!--<property name="maxPoolSize"><value>200</value></property>-->
+        <!--&lt;!&ndash;最大空闲时间，60秒内未使用则连接被丢弃。若为0则永不丢弃。默认值: 0 &ndash;&gt;-->
+         <!--<property name="maxIdleTime"><value>300</value></property>-->
+        <!--&lt;!&ndash;当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。默认值: 3 &ndash;&gt;-->
+         <!--<property name="acquireIncrement"><value>6</value></property>-->
+        <!--&lt;!&ndash;c3p0全局的PreparedStatements缓存的大小。-->
+        <!--如果maxStatements与maxStatementsPerConnection均为0，-->
+        <!--则缓存不生效，只要有一个不为0，则语句的缓存就能生效。如果默认值: 0&ndash;&gt;-->
+        <!--<property name="maxStatements"><value>1000</value></property>-->
+        <!--&lt;!&ndash; 当连接池连接耗尽时，客户端调用getConnection()后等待获取新连接的时间，-->
+        <!--超时后将抛出SQLException，如设为0则无限期等待。单位毫秒。默认: 0 &ndash;&gt;-->
+         <!--<property name="checkoutTimeout" value="5000"/>-->
+        <!--&lt;!&ndash; 初始化连接池中的连接数，取值应在minPoolSize与maxPoolSize之间，默认为3&ndash;&gt;-->
+         <!--<property name="initialPoolSize"><value>2</value></property>-->
+        <!--&lt;!&ndash;每60秒检查所有连接池中的空闲连接。默认值: 0，不检查 &ndash;&gt;-->
+         <!--<property name="idleConnectionTestPeriod"><value>0</value></property>-->
+        <!--&lt;!&ndash;定义在从数据库获取新连接失败后重复尝试的次数。默认值: 30 ；小于等于0表示无限次&ndash;&gt;-->
+         <!--<property name="acquireRetryAttempts"><value>30</value></property>-->
+        <!--&lt;!&ndash;重新尝试的时间间隔，默认为：1000毫秒&ndash;&gt;-->
+         <!--<property name="acquireRetryDelay" value="1000" />-->
+        <!--&lt;!&ndash;关闭连接时，是否提交未提交的事务，默认为false，即关闭连接，回滚未提交的事务 &ndash;&gt;-->
+         <!--<property name="autoCommitOnClose"><value>false</value></property>-->
+        <!--&lt;!&ndash;c3p0将建一张名为Test的空表，并使用其自带的查询语句进行测试。-->
+        <!--如果定义了这个参数那么属性preferredTestQuery将被忽略。-->
+        <!--你不能在这张Test表上进行任何操作，它将只供c3p0测试使用。默认值: null &ndash;&gt;-->
+         <!--&lt;!&ndash;<property name="automaticTestTable"><value>Test</value></property>&ndash;&gt;-->
+        <!--&lt;!&ndash;如果为false，则获取连接失败将会引起所有等待连接池来获取连接的线程抛出异常，但是数据源仍有效保留，-->
+        <!--并在下次调用getConnection()的时候继续尝试获取连接。-->
+        <!--如果设为true，那么在尝试获取连接失败后该数据源将申明已断开并永久关闭。-->
+        <!--默认: false&ndash;&gt;-->
+        <!--<property name="breakAfterAcquireFailure"><value>false</value></property>-->
+        <!--<property name="testConnectionOnCheckout"><value>false</value></property>-->
+    <!--</bean>-->
+    <!--尝试下阿里的连接池 看看性能咋样-->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSourceC3P0Adapter"  destroy-method="close">
+        <property name="driverClass"><value>${jdbc.driverClassName}</value></property>
+        <property name="jdbcUrl"><value>${jdbc.url}</value></property>
+        <property name="user"><value>${jdbc.username}</value></property>
+        <property name="password"><value>${jdbc.password}</value></property>
+        <!--连接池中保留的最小连接数。默认值: 3 -->
+        <property name="minPoolSize"><value>6</value></property>
+        <!--连接池中保留的最大连接数。默认值: 15 -->
+        <property name="maxPoolSize"><value>200</value></property>
+        <!--最大空闲时间，60秒内未使用则连接被丢弃。若为0则永不丢弃。默认值: 0 -->
+        <property name="maxIdleTime"><value>300</value></property>
+        <!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。默认值: 3 -->
+        <property name="acquireIncrement"><value>6</value></property>
+        <!--c3p0全局的PreparedStatements缓存的大小。
+        如果maxStatements与maxStatementsPerConnection均为0，
+        则缓存不生效，只要有一个不为0，则语句的缓存就能生效。如果默认值: 0-->
+        <property name="maxStatements"><value>1000</value></property>
+        <!-- 当连接池连接耗尽时，客户端调用getConnection()后等待获取新连接的时间，
+        超时后将抛出SQLException，如设为0则无限期等待。单位毫秒。默认: 0 -->
+        <property name="checkoutTimeout" value="5000"/>
+        <!-- 初始化连接池中的连接数，取值应在minPoolSize与maxPoolSize之间，默认为3-->
+        <property name="initialPoolSize"><value>2</value></property>
+        <!--每60秒检查所有连接池中的空闲连接。默认值: 0，不检查 -->
+        <property name="idleConnectionTestPeriod"><value>0</value></property>
+        <!--定义在从数据库获取新连接失败后重复尝试的次数。默认值: 30 ；小于等于0表示无限次-->
+        <property name="acquireRetryAttempts"><value>30</value></property>
+        <!--重新尝试的时间间隔，默认为：1000毫秒-->
+        <property name="acquireRetryDelay" value="1000" />
+        <!--关闭连接时，是否提交未提交的事务，默认为false，即关闭连接，回滚未提交的事务 -->
+        <property name="autoCommitOnClose"><value>false</value></property>
+        <!--c3p0将建一张名为Test的空表，并使用其自带的查询语句进行测试。
+        如果定义了这个参数那么属性preferredTestQuery将被忽略。
+        你不能在这张Test表上进行任何操作，它将只供c3p0测试使用。默认值: null -->
+        <!--<property name="automaticTestTable"><value>Test</value></property>-->
+        <!--如果为false，则获取连接失败将会引起所有等待连接池来获取连接的线程抛出异常，但是数据源仍有效保留，
+        并在下次调用getConnection()的时候继续尝试获取连接。
+        如果设为true，那么在尝试获取连接失败后该数据源将申明已断开并永久关闭。
+        默认: false-->
+        <property name="breakAfterAcquireFailure"><value>false</value></property>
+        <property name="testConnectionOnCheckout"><value>false</value></property>
+    </bean>
+    <!--这个是jndi数据源使用-->
+    <!--<bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">-->
+        <!--<property name="jndiName" value="java:comp/env/jdbc/alwaysgotop"></property>-->
+    <!--</bean>-->
+
+    <bean id="sessionFactory"
+		class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="mappingDirectoryLocations">
+			<list>
+				<value>classpath*:/config/hibernate</value>
+			</list>
+		</property>
+		<property name="lobHandler" ref="lobHandler"/>
+		<property name="packagesToScan">
+            	<list>
+            		<value>com.skyline.**.domain</value>
+            	</list>
+        </property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">${jdbc.dialect}</prop>
+                <!--hibernate 创建表 配置 尼玛千万不要忘记注释掉哇 要不然数据  就哇哇的没有了啊-->
+                <!--<prop key="hibernate.hbm2ddl.auto">create</prop>-->
+				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.query.factory_class">
+					org.hibernate.hql.ast.ASTQueryTranslatorFactory
+				</prop>
+                <prop key="hibernate.connection.autocommit">false</prop>
+                 <!-- 打开二级缓存      -->
+                <prop key="hibernate.cache.use_second_level_cache">true</prop>
+                <!--    指定二级缓存的外部程序 ECACHE  -->
+                <prop key="hibernate.cache.provider_class">org.hibernate.cache.EhCacheProvider</prop>
+				<prop key="hibernate.cache.use_query_cache">true</prop>
+				<prop key="hibernate.jdbc.fetch_size">50</prop>
+				<prop key="hibernate.jdbc.batch_size">50</prop>
+			</props>
+		</property>
+	</bean>
+    <bean id="transactionManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+         <property name="sessionFactory">
+             <ref bean="sessionFactory"/>
+         </property>
+     </bean>
+	<bean id="transactionInterceptor"
+	    class="org.springframework.transaction.interceptor.TransactionInterceptor">
+	    <property name="transactionManager" ref="transactionManager"></property>
+	    <property name="transactionAttributes">
+	        <props>
+                <prop key="get*">PROPAGATION_REQUIRED,ISOLATION_DEFAULT,-Exception</prop>
+                <prop key="query*">PROPAGATION_REQUIRED,readOnly,ISOLATION_DEFAULT,-Exception</prop>
+                <prop key="calc*">PROPAGATION_REQUIRED,readOnly,ISOLATION_DEFAULT,-Exception</prop>
+                <prop key="find*">PROPAGATION_REQUIRED,readOnly,ISOLATION_DEFAULT,-Exception</prop>
+                <prop key="load*">PROPAGATION_REQUIRED,readOnly,ISOLATION_DEFAULT,-Exception</prop>
+                <prop key="search*">PROPAGATION_REQUIRED,readOnly,ISOLATION_DEFAULT,-Exception</prop>
+                <prop key="save*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="update*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="edit*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="remove*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="delete*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="clear*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="restore*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="replace*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="process*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="execute*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="insert*">PROPAGATION_REQUIRED,-Exception</prop>
+                <prop key="*">PROPAGATION_REQUIRED,-Exception</prop>
+	        </props>
+	    </property>
+	</bean>
+
+	 <bean  class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+          <property name="beanNames">
+              <list>
+                    <value>*DAO</value>
+                    <value>*Service</value>
+              </list>
+          </property>
+          <property name="interceptorNames">
+              <list>
+                  <value>transactionInterceptor</value>
+              </list>
+          </property>
+	 </bean>
+    <!--定义cache 服务类-->
+    <!--CacheManager-->
+    <bean id="cacheManager" class="net.sf.ehcache.CacheManager" lazy-init="false"/>
+    <bean id="sessionCache" class="com.skyline.pub.cache.SessionCache"  lazy-init="false">
+        <constructor-arg ref="cacheManager"/>
+    </bean>
+    <bean id="publicCache" class="com.skyline.pub.cache.PublicCache"  lazy-init="false">
+        <constructor-arg ref="cacheManager"/>
+    </bean>
+    <!--spring 工具类-->
+    <bean id="springContextUtil" class="com.skyline.pub.utils.SpringContextUtil"/>
+    <bean id="uploadOnLoadlister" class="com.skyline.upload.listener.UploadOnLoadListener" lazy-init="false" destroy-method="close"/>
+</beans>

@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="gb2312"?>
+<!--
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ - 新的skyline项目构建文件
+ - by skyline 2011年6月15日16:06:01
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ - modify log
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ -->
+
+<project name="SkyLine project"   default="source" basedir=".">
+
+    <!-- build.properties 定义了本地化的路径信息等 -->
+    <property file="./build.properties"/>
+
+    <property name="SkyLine.version" value="0.9"/>
+
+
+    <property name="src.dir" value="src"/>
+    <property name="web.dir" value="web"/>
+
+    <property name="config.dir" value="src/config"/>
+    <property name="lib.dir" value="web/WEB-INF/lib"/>
+
+    <property name="classes.dir" value="web/WEB-INF/classes"/>
+    <property name="out.dir" value="output"/>
+    <!--打包时所用路径-->
+    <property name="build.dir" value="build"/>
+
+    <property name="webstart.dir" value="web/webstart"/>
+
+    <path id="base.classpath">
+        <pathelement location="web/WEB-INF/classes"/>
+
+        <fileset dir="web/WEB-INF/lib">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+
+    <target name="init">
+        <mkdir dir="web/WEB-INF/classes"/>
+        <mkdir dir="${out.dir}"/>
+    </target>
+
+    <target name="clean"
+        description="Removes all the generated files or directories">
+        <delete dir="web/WEB-INF/classes"/>
+        <delete dir="${out.dir}"/>
+        <delete dir="${source.deploy}"/>
+    </target>
+
+    <target name="compile" depends="init" description="compile all java code">
+		<javac
+            destdir="web/WEB-INF/classes"
+            debug="${opt.javac.debug}"
+            optimize="${opt.javac.optimize}"
+            memoryMaximumSize="500m"
+            fork="yes"
+            encoding="UTF-8"
+            excludes="**/.svn/**">
+            <compilerarg    line="-encoding UTF-8"/>
+            <classpath refid="base.classpath"/>
+
+            <src path="${src.dir}"/>
+        </javac>
+    </target>
+    
+   
+	
+    <target name="cfg"
+            description="复制配置文件、jsp、freemarker模版文件"
+            depends="init">
+        <copy todir="${source.deploy}/WEB-INF">
+            <fileset dir="web/WEB-INF">
+            	<include name="web.xml"/>
+                <exclude name="**/.svn/**"/>
+           	</fileset>
+        </copy>
+        <copy todir="${source.deploy}/WEB-INF/classes">
+            <fileset dir="src">
+            	<include name="**/**/*.xml"/>
+            	<include name="**/**/*.properties"/>
+                <exclude name="**/.svn/**"/>
+           	</fileset>
+        </copy>
+    </target>
+
+    <target name="html"
+            description="发布web html源文件到webapp"
+            depends="cfg">
+
+        <copy todir="${source.deploy}" verbose="no">
+            <fileset dir="${web.dir}">
+            	<include name="**/*.html"/>
+            	<include name="**/*.jsp"/>
+                <exclude name="**/.svn/**"/>
+            </fileset>
+        </copy>
+
+    </target>
+
+    <target name="lib" description="发布lib到webapp" >
+
+        <copy todir="${source.deploy}/WEB-INF/lib">
+            <fileset dir="web/WEB-INF/lib">
+            	<include name="*.jar"/>
+                <!-- 发布到tomcat下面时候不能带这两个包 -->
+                <exclude name="WEB-INF/lib/servlet-api.jar"/>
+                <exclude name="WEB-INF/lib/jsp-api.jar"/>
+                <exclude name="**/.svn/**"/>
+           </fileset>
+        </copy>
+
+    </target>
+
+
+	
+    <target name="source(only)"
+            description="发布.class和web源文件到resin/webapp"
+            depends="compile">
+		
+        <copy todir="${source.deploy}/WEB-INF/classes" verbose="yes">
+            <fileset dir="web/WEB-INF/classes">
+                <include name="com/skyline/**/*.class"/>
+            </fileset>
+        </copy>
+        <touch file="${source.deploy}/.reload"/>
+    </target>
+
+
+    <target name="source"
+            description="deploy class and jsp file and xml config"
+            depends="compile,cfg">
+
+        <copy todir="${source.deploy}/WEB-INF/classes" verbose="yes">
+            <fileset dir="web/WEB-INF/classes">
+                <include name="com/skyline/**/*.class"/>
+            </fileset>
+        </copy>
+         <copy todir="${source.deploy}" verbose="no">
+            <fileset dir="${web.dir}">
+            	<include name="**/*.*"/>
+                <!-- 发布到tomcat下面时候不能带这两个包 -->
+                <exclude name="WEB-INF/lib/servlet-api.jar"/>
+                <exclude name="WEB-INF/lib/jsp-api.jar"/>
+                <exclude name="**/.svn/**"/>
+            </fileset>
+        </copy>
+
+        
+        <!--touch file="${source.deploy}/.reload"/-->
+    </target>
+    <target name="warinit">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}\WEB-INF"/>
+        <mkdir dir="${build.dir}\WEB-INF\classes"/>
+        <copy todir="${build.dir}">
+            <fileset dir="${basedir}\web">
+                <include name="**/*.*"/>
+                <exclude name="**/.svn/**"/>
+                <!-- 如果带着这两个jar包的话 tomcat 会报错  -->
+                <exclude name="WEB-INF/lib/servlet-api.jar"/>
+                <exclude name="WEB-INF/lib/jsp-api.jar"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="copytowar" depends="compile">
+        <copy todir="${build.dir}/WEB-INF/classes" verbose="yes">
+            <fileset dir="${classes.dir}">
+                <include name="**/*.class"/>
+            </fileset>
+            <fileset dir="${src.dir}">
+                <include name="**/*.*"/>
+                <exclude name="**/*.java"/>
+                <exclude name="**/.svn/**"/>
+
+                <!--<include name="**/*.properties"/>-->
+                <!--<include name="**/*.xml"/>-->
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="makewar"
+            description="make war file"
+            depends="warinit,copytowar">
+        <delete file="${build.dir}/skyline.war"/>
+        <war warfile="${build.dir}/skyline.war" webxml="${build.dir}/WEB-INF/web.xml">
+            <fileset dir="${build.dir}"/>
+        </war>
+    </target>
+    <target name="doc">
+			<javadoc
+           destdir="docs/api"
+           author="true"
+           version="true"
+           use="true"
+           windowtitle="SkyLine API"
+           maxmemory="512M"
+           >
+    <packageset dir="src" defaultexcludes="yes">
+      <include name="com/skyline/**/**"/>
+    </packageset>
+
+    <doctitle><![CDATA[<h1>SkyLine JavaDoc 文档库</h1>]]></doctitle>
+    <bottom><![CDATA[<i>Copyright &#169; 2011 浪迹天涯. All Rights Reserved.</i>]]></bottom>
+
+
+    <group title="com.skyline" packages="com.skyline.*"/>
+  </javadoc>
+  </target>
+</project>

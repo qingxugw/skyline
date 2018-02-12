@@ -1,0 +1,315 @@
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.objectFactory" value="spring" />
+    <constant name="struts.action.extension" value="action,do,webwork"/>
+    <constant name="struts.multipart.saveDir" value="/tmp"></constant>
+    <constant name="struts.multipart.maxSize" value="30000000" />
+    <constant name="struts.i18n.encoding" value="UTF-8"></constant>
+
+    <!--定义全局异常-->
+    <package name="globalException"  extends="struts-default">
+        <!-- 定义一个拦截器 -->
+        <interceptors>
+            <interceptor name="exceptionHandler"
+                         class="com.skyline.pub.interceptor.ExceptionInterceptor">
+            </interceptor>
+            <!-- 拦截器栈 -->
+            <interceptor-stack name="mydefault">
+                <interceptor-ref name="defaultStack" />
+                <interceptor-ref name="exceptionHandler" />
+            </interceptor-stack>
+        </interceptors>
+        <default-interceptor-ref name="mydefault"/>
+        <global-results>
+            <result name="global-error">/globalError.jsp</result>
+            <result name="test-error">/globalError1.jsp</result>
+            <result name="login">/sessionError.jsp</result>
+        </global-results>
+        <global-exception-mappings>
+            <exception-mapping exception="java.lang.Exception" result="global-error">
+            </exception-mapping>
+        </global-exception-mappings>
+    </package>
+    <!--定义全局异常-->
+    <package name="globalAjaxException"  extends="json-default">
+        <!-- 定义一个拦截器 -->
+        <interceptors>
+            <interceptor name="ajaxExceptionHandler"
+                         class="com.skyline.pub.interceptor.AjaxExceptionInterceptor">
+            </interceptor>
+            <!-- 拦截器栈 -->
+            <interceptor-stack name="myAjaxDefault">
+                <interceptor-ref name="defaultStack" />
+                <interceptor-ref name="ajaxExceptionHandler" />
+            </interceptor-stack>
+        </interceptors>
+        <default-interceptor-ref name="myAjaxDefault"/>
+        <global-results>
+            <result name="global-error">/globalError.jsp</result>
+            <result name="test-error">/globalError1.jsp</result>
+            <result name="ajaxError" type="redirectAction">
+                <param name="actionName">queryAjax</param>
+            </result>
+        </global-results>
+        <global-exception-mappings>
+            <exception-mapping exception="java.lang.Exception" result="global-error">
+            </exception-mapping>
+        </global-exception-mappings>
+        <action name ="queryAjax" class ="exceptionAction" method="queryAjax">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+    <package name="root"  extends="globalException" namespace="/">
+        <action name ="login" class ="loginAction" method="login">
+            <result name="success">main.jsp</result>
+            <result name="error">index.jsp</result>
+        </action>
+        <action name ="logout" class ="loginAction" method="logout">
+            <result name="success">index.jsp</result>
+            <result name="error">index.jsp</result>
+        </action>
+    </package>
+    <!--这里root包下面用来跳转的-->
+    <package name="base"  extends="globalException" namespace="/jsp/base">
+        <action name ="initMenuPage" class ="menuAction" method="InitMenuPage">
+            <result name="success">Menu.jsp</result>
+            <result name="error">Menu.jsp</result>
+        </action>
+        <action name ="initLogPage" class ="logAction" method="initLogPage">
+            <result name="success">QueryLog.jsp</result>
+            <result name="error">QueryLog.jsp</result>
+        </action>
+        <action name ="initLogPage" class ="logAction" method="initLogPage">
+            <result name="success">QueryLog.jsp</result>
+            <result name="error">QueryLog.jsp</result>
+        </action>
+        <action name ="initUserPage" class ="userAction" method="initUserPage">
+            <result name="success">User.jsp</result>
+            <result name="error">User.jsp</result>
+        </action>
+        <action name ="initRolePage" class ="roleAction" method="initRolePage">
+            <result name="success">Role.jsp</result>
+            <result name="error">Role.jsp</result>
+        </action>
+        <action name ="initRoleOperationPage" class ="roleOperationAction" method="initRoleOperationPage">
+            <result name="success">RoleOperation.jsp</result>
+            <result name="error">RoleOperation.jsp</result>
+        </action>
+        <action name ="initRoleUserPage" class ="roleUserAction" method="initRoleUserPage">
+            <result name="success">RoleUser.jsp</result>
+            <result name="error">RoleUser.jsp</result>
+        </action>
+    </package>
+    <package name="json"  extends="json-default" namespace="/">
+        <action name ="privateChildTree" class ="loginAction" method="privateChildTree">
+            <result name = "children" type="json" >
+                <param name="root">children</param>
+            </result>
+        </action>
+        <action name ="ceshi" class ="loginAction" method="ceshi">
+            <result name = "children" type="json" >
+                <param name="root">children</param>
+            </result>
+        </action>
+    </package>
+    <package name="baseJson"  extends="globalAjaxException" namespace="/jsp/base">
+        <!--菜单管理-->
+        <action name ="privateChildTree" class ="menuAction" method="privateChildTree">
+            <result name = "children" type="json" >
+                <param name="root">children</param>
+            </result>
+        </action>
+        <action name ="saveMenu" class ="menuAction" method="saveMenu">
+            <result name = "dto" type="json" >
+                <param name="root">dto</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="changeIndex" class ="menuAction" method="changeIndex">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="queryLog" class ="logAction" method="queryLog">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="queryModule" class ="logAction" method="queryModule">
+            <result name = "modules" type="json" >
+                <param name="root">modules</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="queryOpType" class ="logAction" method="queryOpType">
+            <result name = "opTypes" type="json" >
+                <param name="root">opTypes</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <!--用户管理-->
+        <action name ="queryUserList" class ="userAction" method="queryUserList">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="saveUser" class ="userAction" method="saveUser">
+            <result name = "dto" type="json" >
+                <param name="root">dto</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="deleteUser" class ="userAction" method="deleteUser">
+            <result name = "dto" type="json" >
+                <param name="root">dto</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <!--角色管理-->
+        <action name ="queryRoleList" class ="roleAction" method="queryRoleList">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="saveRole" class ="roleAction" method="saveRole">
+            <result name = "dto" type="json" >
+                <param name="root">dto</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="deleteRole" class ="roleAction" method="deleteRole">
+            <result name = "dto" type="json" >
+                <param name="root">dto</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <!--角色菜单管理-->
+        <action name ="queryOperationCheckedList" class ="roleOperationAction" method="queryOperationCheckedList">
+            <result name = "children" type="json" >
+                <param name="root">children</param>
+            </result>
+        </action>
+        <!--保存角色菜单关联关系-->
+        <action name ="saveRoleOperation" class ="roleOperationAction" method="saveRoleOperation">
+            <result name = "dto" type="json" >
+                <param name="root">dto</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <!--角色用户管理-->
+        <action name ="queryUserCheckedList" class ="roleUserAction" method="queryUserCheckedList">
+            <result name = "children" type="json" >
+                <param name="root">children</param>
+            </result>
+        </action>
+        <!--保存角色用户关联关系-->
+        <action name ="saveRoleUser" class ="roleUserAction" method="saveRoleUser">
+            <result name = "dto" type="json" >
+                <param name="root">dto</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+    <package name="upload"  extends="globalException" namespace="/jsp/upload">
+        <action name ="initUploadPage" class ="uploadAction" method="initUploadPage">
+            <result name="success">Upload.jsp</result>
+            <result name="error">Upload.jsp</result>
+        </action>
+        <action name ="initQueryUserProductPage" class ="uploadQueryAction" method="initQueryUserProductPage">
+            <result name="success">QueryUserProduct.jsp</result>
+            <result name="error">QueryUserProduct.jsp</result>
+        </action>
+        <action name ="initQueryProductPage" class ="uploadQueryAction" method="initQueryProductPage">
+            <result name="success">QueryProduct.jsp</result>
+            <result name="error">QueryProduct.jsp</result>
+        </action>
+        <action name ="initChartsPage" class ="uploadQueryAction" method="initChartsPage">
+            <result name="success">Charts.jsp</result>
+            <result name="error">Charts.jsp</result>
+        </action>
+    </package>
+    <package name="uploadJson"  extends="globalAjaxException" namespace="/jsp/upload">
+        <action name ="uploadExcelFile" class ="uploadAction" method="uploadExcelFile">
+            <result name = "result" type="json" >
+                <param name="contentType">text/html</param>
+                <param name="root">result</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="queryUserList" class ="uploadQueryAction" method="queryUserList">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="queryUserProductList" class ="uploadQueryAction" method="queryUserProductList">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="queryProductList" class ="uploadQueryAction" method="queryProductList">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="queryProductSaleList" class ="uploadQueryAction" method="queryProductSaleList">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="queryMonthArray" class ="uploadQueryAction" method="queryMonthArray">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="queryChartData" class ="uploadQueryAction" method="queryChartData">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+        <action name ="executeProcedure" class ="uploadQueryAction" method="executeProcedure">
+            <result name = "resultMap" type="json" >
+                <param name="root">resultMap</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="ignoreHierarchy">false</param>
+            </result>
+        </action>
+    </package>
+
+</struts>

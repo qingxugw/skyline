@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+       default-lazy-init="false">
+    <!--系统登录-->
+    <bean id="baseDAO" class="com.skyline.pub.dao.BaseDAOHibernate">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id ="baseService" class ="com.skyline.pub.service.BaseServiceImpl">
+        <property name="baseDAO" ref="baseDAO"/>
+    </bean>
+    <bean id="userDAO" class="com.skyline.base.dao.UserDAOHibernate" parent="baseDAO">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id ="loginService" class ="com.skyline.base.service.impl.LoginServiceImpl" parent="baseService">
+        <property name="userDAO" ref="userDAO"/>
+    </bean>
+    <!--菜单管理-->
+    <bean id="menuDAO" class="com.skyline.base.dao.MenuDAOHibernate" parent="baseDAO">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id ="menuService" class ="com.skyline.base.service.impl.MenuServiceImpl" parent="baseService">
+        <property name="menuDAO" ref="menuDAO"/>
+    </bean>
+    <!--日志管理-->
+    <bean id="logDAO" class="com.skyline.base.dao.LogDAOHibernate" parent="baseDAO">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id ="logService" class ="com.skyline.base.service.impl.LogServiceImpl" parent="baseService">
+        <property name="logDAO" ref="logDAO"/>
+    </bean>
+    <!--用户管理-->
+    <bean id ="userService" class ="com.skyline.base.service.impl.UserServiceImpl" parent="baseService">
+        <property name="userDAO" ref="userDAO"/>
+    </bean>
+    <!--角色管理-->
+    <bean id="roleDAO" class="com.skyline.base.dao.RoleDAOHibernate" parent="baseDAO">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id ="roleService" class ="com.skyline.base.service.impl.RoleServiceImpl" parent="baseService">
+        <property name="roleDAO" ref="roleDAO"/>
+    </bean>
+    <!--excel 上传-->
+    <bean id="uploadDAO" class="com.skyline.upload.dao.UploadHibernateDAO" parent="baseDAO">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+    <bean id ="uploadService" class ="com.skyline.upload.service.impl.UploadServiceImpl" parent="baseService">
+        <property name="uploadDAO" ref="uploadDAO"/>
+    </bean>
+</beans>

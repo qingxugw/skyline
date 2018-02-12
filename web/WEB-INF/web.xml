@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+    <display-name>skyline</display-name>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>
+            classpath*:/config/spring/spring-*.xml
+        </param-value>
+    </context-param>
+
+    <filter>
+        <filter-name>struts2</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.ng.filter.StrutsPrepareAndExecuteFilter</filter-class>
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>
+                struts-default.xml,
+                struts-plugin.xml,
+                config/struts/struts-action.xml
+            </param-value>
+        </init-param>
+    </filter>
+    <!--Spring为我们解决Hibernate的Session的关闭与开启问题-->
+    <filter>
+        <filter-name>hibernateFilter</filter-name>
+        <filter-class>org.springframework.orm.hibernate3.support.OpenSessionInViewFilter</filter-class>
+        <init-param>
+            <param-name>singleSession</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </filter>
+    <!--AppUtilFilter 解决可以在任意位置获取需要的reuqest、reponse 等对象-->
+    <filter>
+        <filter-name>AppUtilFilter</filter-name>
+        <filter-class>com.skyline.pub.filter.AppUtilFilter</filter-class>
+    </filter>
+    <!--中文编码问题-->
+    <filter>
+            <filter-name>CharacterEncodingFilter</filter-name>
+                <filter-class>
+                    org.springframework.web.filter.CharacterEncodingFilter
+                </filter-class>
+            <init-param>
+                   <param-name>encoding</param-name>
+                   <param-value>UTF-8</param-value>
+            </init-param>
+            <init-param>
+                  <param-name>forceEncoding</param-name>
+                  <param-value>true</param-value>
+            </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>hibernateFilter</filter-name>
+        <url-pattern>*.action</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+         <filter-name>CharacterEncodingFilter</filter-name>
+         <url-pattern>*.html</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+             <filter-name>CharacterEncodingFilter</filter-name>
+             <url-pattern>*.jsp</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+             <filter-name>CharacterEncodingFilter</filter-name>
+              <url-pattern>*.action</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>AppUtilFilter</filter-name>
+        <url-pattern>*.action</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>struts2</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <listener>
+        <listener-class>
+            org.springframework.web.context.ContextLoaderListener
+        </listener-class>
+    </listener>
+    <!--spring中的提供了一个名为org.springframework.web.util.IntrospectorCleanupListener的监听器。-->
+    <!--它主要负责处理由　JavaBeans Introspector的使用而引起的缓冲泄露。spring中对它的描述如下：    -->
+    <!--它是一个在web应用关闭的时候,清除JavaBeans Introspector的监听器.-->
+    <!--在web.xml中注册这个listener.可以保证在web 应用关闭的时候释放与掉这个web 应用相关的class loader 和由它管理的类-->
+    <listener>
+        <listener-class>org.springframework.web.util.IntrospectorCleanupListener</listener-class>
+    </listener>
+
+    <!-- session超时定义,单位为分钟 -->
+	<session-config>
+		<session-timeout>30</session-timeout>
+	</session-config>
+
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+</web-app>

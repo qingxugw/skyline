@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+       default-lazy-init="false">
+
+    <!--定义要执行定时任务的类-->
+    <bean name="testBo" class="com.skyline.quartz.TestBO"></bean>
+    <bean name="pubQuartzJobService" class="com.skyline.quartz.service.PubQuartzJobService"></bean>
+    <!--<bean name="pubQuartzJobBean" class="com.skyline.quartz.PubQuartzJobBean">-->
+        <!--<property name="pubQuartzJobService" ref="pubQuartzJobService"/>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash; 定义调用对象和调用对象的方法 &ndash;&gt;-->
+    <!--<bean id="jobtask" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean" >-->
+        <!--&lt;!&ndash; 调用的类  &ndash;&gt;-->
+        <!--<property name="targetObject" ref="testBo"/>-->
+        <!--&lt;!&ndash;  调用类中的方法 &ndash;&gt;-->
+        <!--<property name="targetMethod" value="work"/>-->
+        <!--&lt;!&ndash; 是否允许任务并发执行。当值为false时，表示必须等到前一个线程处理完毕后才再启一个新的线程 &ndash;&gt;-->
+        <!--<property name="concurrent" value="false"/>-->
+    <!--</bean>-->
+
+    <!--&lt;!&ndash; 定义触发时间 &ndash;&gt;-->
+    <!--<bean id="doTime" class="org.springframework.scheduling.quartz.CronTriggerBean">-->
+        <!--<property name="jobDetail" ref="jobtask"/>-->
+        <!--&lt;!&ndash; Cron表达式0 0/15 * * * ? 每15分钟执行一次 ; 0 46 11 * * ? 11点46执行一次; 0 0 2 * * ?每天两点执行;&ndash;&gt;-->
+        <!--<property name="cronExpression" >-->
+            <!--<value>*/5 * * * * ?</value>-->
+        <!--</property>-->
+    <!--</bean>-->
+
+    <!-- 总管理类 如果将lazy-init='false'那么容器启动就会执行调度程序 -->
+    <!--<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">-->
+        <!--<property name="dataSource" ref ="dataSource" />-->
+        <!--<property name="applicationContextSchedulerContextKey" value="applicationContextKey"/>-->
+        <!--<property name="configLocation" value="classpath:quartz.properties"/>-->
+        <!--&lt;!&ndash;设置quartz 随容器启动&ndash;&gt;-->
+        <!--&lt;!&ndash;<property name="autoStartup" value="true"/>&ndash;&gt;-->
+    <!--</bean>-->
+    <!--<bean id="jodDetail" class="org.springframework.scheduling.quartz.JobDetailBean">-->
+        <!--<property name="jobClass">-->
+            <!--<value>-->
+                <!--com.skyline.quartz.PubQuartzJobBean-->
+            <!--</value>-->
+        <!--</property>-->
+        <!--<property name="jobDataAsMap">-->
+            <!--<map>-->
+                <!--<entry key="pubQuartzJobService">-->
+                    <!--<ref bean="pubQuartzJobService"/>-->
+                <!--</entry>-->
+            <!--</map>-->
+        <!--</property>-->
+    <!--</bean>-->
+    <!--<bean id="cronTrigger" class="org.springframework.scheduling.quartz.CronTriggerBean">-->
+        <!--<property name="jobDetail">-->
+            <!--<ref bean="jobTask" />-->
+        <!--</property>-->
+        <!--<property name="cronExpression">-->
+            <!--<value>*/5 * * * * ?</value>-->
+        <!--</property>-->
+    <!--</bean>-->
+</beans>

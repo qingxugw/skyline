@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+         http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+         http://www.springframework.org/schema/aop
+         http://www.springframework.org/schema/aop/spring-aop-3.0.xsd"
+       default-lazy-init="false">
+    <bean id ="exceptionAction" class ="com.skyline.pub.ExceptionAction" parent="baseAction" scope ="prototype">
+    </bean>
+    <!--系统登录-->
+    <bean id ="baseAction" class ="com.skyline.pub.BaseAction"  scope ="prototype">
+        <property name="sessionCache" ref="sessionCache"/>
+    </bean>
+    <bean id ="loginAction" class ="com.skyline.base.action.LoginAction" parent="baseAction" scope ="prototype">
+        <property name="loginService" ref="loginService"/>
+    </bean>
+    <!--菜单管理-->
+    <bean id ="menuAction" class ="com.skyline.base.action.MenuAction" parent="baseAction" scope ="prototype">
+        <property name="menuService" ref="menuService"/>
+    </bean>
+    <bean id="logAction" class="com.skyline.base.action.LogAction" parent="baseAction" scope="prototype">
+        <property name="logService" ref="logService"/>
+    </bean>
+    <bean id="userAction" class="com.skyline.base.action.UserAction" parent="baseAction" scope="prototype">
+        <property name="userService" ref="userService"/>
+    </bean>
+    <bean id="roleAction" class="com.skyline.base.action.RoleAction" parent="baseAction" scope="prototype">
+        <property name="roleService" ref="roleService"/>
+    </bean>
+    <bean id="roleOperationAction" class="com.skyline.base.action.RoleOperationAction" parent="baseAction" scope="prototype">
+        <property name="roleService" ref="roleService"/>
+        <property name="menuService" ref="menuService"/>
+    </bean>
+    <bean id="roleUserAction" class="com.skyline.base.action.RoleUserAction" parent="baseAction" scope="prototype">
+        <property name="roleService" ref="roleService"/>
+        <property name="userService" ref="userService"/>
+    </bean>
+    <!--文件上传-->
+    <bean id="uploadAction" class="com.skyline.upload.action.UploadAction" parent="baseAction" scope="prototype">
+    </bean>
+    <bean id="uploadQueryAction" class="com.skyline.upload.action.UplaodQueryUserProductAction" parent="baseAction" scope="prototype">
+        <property name="uploadService" ref="uploadService"/>
+    </bean>
+</beans>
